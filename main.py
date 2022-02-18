@@ -47,6 +47,7 @@ class Player(pygame.sprite.Sprite):
         self.movex = 0  # move along X
         self.movey = 0  # move along Y
         self.frame = 0  # count frames
+        self.health = 10  # keep track of hp
         self.images = []
 
         for i in range(1, 5):
@@ -76,16 +77,23 @@ class Player(pygame.sprite.Sprite):
         # Moving left
         if self.movex < 0:
             self.frame += 1
-            if self.frame > 3*ani:
+            if self.frame > 3 * ani:
                 self.frame = 0
-            self.image = pygame.transform.flip(self.images[self.frame//ani], True, False)
+            self.image = pygame.transform.flip(self.images[self.frame // ani], True, False)
 
         # Moving right
         if self.movex > 0:
             self.frame += 1
-            if self.frame > 3*ani:
+            if self.frame > 3 * ani:
                 self.frame = 0
-            self.image = self.images[self.frame//ani]
+            self.image = self.images[self.frame // ani]
+
+        # Touching enemy
+        hit_list = pygame.sprite.spritecollide(self, enemy_list, False)
+
+        for enemy in hit_list:
+            self.health -= 1
+            print(self.health)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -101,19 +109,51 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.counter = 0  # counter variable
+
+    def move(self):
+        '''
+        enemy movement
+        '''
+        distance = 80
+        speed = 8
+
+        if 0 <= self.counter <= distance:
+            self.rect.x += speed
+            self.image = pygame.transform.flip(self.image, False, False)
+        elif distance <= self.counter <= distance * 2:
+            self.rect.x -= speed
+            self.image = pygame.transform.flip(self.image, True, False)
+        else:
+            self.counter = 0
+
+        self.counter += 1
 
 
 class Level():
     def bad(self, lvl, eloc):
         if lvl == 1:
-            enemy = Enemy(eloc[0], eloc[1], 'ImpVanillaWalk1.png') # spawns an enemy
-            enemy_list = pygame.sprite.Group() # creates enemy group
+            enemy = Enemy(eloc[0], eloc[1], 'ImpVanillaWalk1.png')  # spawns an enemy
+            enemy_list = pygame.sprite.Group()  # creates enemy group
             enemy_list.add(enemy)
 
         if lvl == 2:
             print("Level " + str(lvl))
 
         return enemy_list
+
+# X location, Y location, img width, img height, img file
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, xloc, yloc, imgw, imgh, img):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(os.path.join('images', img)).convert()
+        self.image.convert_alpha(self)
+        self.image.set_colorkey(ALPHA)
+        self.rect = self.image.get_rect()
+        self.rect.y = yloc
+        self.rect.x = xloc
+
+
 
 # put Python classes and functions here
 
@@ -133,7 +173,7 @@ player.rect.x = 0  # go to x
 player.rect.y = 0  # go to y
 player_list = pygame.sprite.Group()
 player_list.add(player)
-steps = 10 # how many pixels to move
+steps = 10  # how many pixels to move
 
 eloc = []
 eloc = [300, 0]
@@ -177,8 +217,12 @@ while main:
     world.blit(backdrop, backdropbox)
     player.update()
     player_list.draw(world)  # draw the player
-    enemy_list.draw(world)
+    enemy_list.draw(world) # refresh enemy
+    for e in enemy_list:
+        e.move()
     pygame.display.flip()
     clock.tick(fps)
+
+
 
 # put game loop here
