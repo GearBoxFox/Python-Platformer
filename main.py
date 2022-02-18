@@ -142,6 +142,22 @@ class Level():
 
         return enemy_list
 
+    def ground(self, lvl, x, y, w, h):
+        ground_list = pygame.sprite.Group()
+        if lvl == 1:
+            ground = Platform(x, y, w, h, 'GrassGround.png')
+            ground_list.add(ground)
+        if lvl == 2:
+            print("Level " + str(lvl))
+
+    def platform(self, lvl):
+        plat_list = pygame.sprite.Group()
+        if lvl == 1:
+            plat = Platform(200, worldy-97-128, 285, 67, "GrassGround.png")
+            plat_list.add(plat)
+            plat = Platform(500, worldy-97-320, 197, 54, "GrassGround.png")
+            plat_list.add(plat)
+
 # X location, Y location, img width, img height, img file
 class Platform(pygame.sprite.Sprite):
     def __init__(self, xloc, yloc, imgw, imgh, img):
