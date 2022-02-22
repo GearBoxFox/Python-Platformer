@@ -142,34 +142,6 @@ class Level():
 
         return enemy_list
 
-    def ground(self, lvl, x, y, w, h):
-        ground_list = pygame.sprite.Group()
-        if lvl == 1:
-            ground = Platform(x, y, w, h, 'GrassGround.png')
-            ground_list.add(ground)
-        if lvl == 2:
-            print("Level " + str(lvl))
-
-    def platform(self, lvl):
-        plat_list = pygame.sprite.Group()
-        if lvl == 1:
-            plat = Platform(200, worldy-97-128, 285, 67, "GrassGround.png")
-            plat_list.add(plat)
-            plat = Platform(500, worldy-97-320, 197, 54, "GrassGround.png")
-            plat_list.add(plat)
-
-# X location, Y location, img width, img height, img file
-class Platform(pygame.sprite.Sprite):
-    def __init__(self, xloc, yloc, imgw, imgh, img):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join('images', img)).convert()
-        self.image.convert_alpha(self)
-        self.image.set_colorkey(ALPHA)
-        self.rect = self.image.get_rect()
-        self.rect.y = yloc
-        self.rect.x = xloc
-
-
 
 # put Python classes and functions here
 
@@ -194,6 +166,9 @@ steps = 10  # how many pixels to move
 eloc = []
 eloc = [300, 0]
 enemy_list = Level.bad(1, 1, eloc)
+
+ground_list = Level.ground(1, 1, 0, worldy - 240, 800, 240)
+plat_list = Level.platform(1)
 
 # put run-once code here
 
@@ -233,12 +208,10 @@ while main:
     world.blit(backdrop, backdropbox)
     player.update()
     player_list.draw(world)  # draw the player
-    enemy_list.draw(world) # refresh enemy
+    enemy_list.draw(world)  # refresh enemy
     for e in enemy_list:
         e.move()
     pygame.display.flip()
     clock.tick(fps)
-
-
 
 # put game loop here
