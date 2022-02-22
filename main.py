@@ -142,6 +142,15 @@ class Level():
 
         return enemy_list
 
+    def ground(self, lvl, gloc, tx, ty):
+        ground_list = pygame.sprite.Group()
+        i = 0
+        if lvl == 1:
+            while i < len(gloc):
+                ground = Platform(gloc[i], worldy - ty, tx, ty, 'platformPack_tile001.png')
+                ground_list.add(ground)
+                i += 1
+
 
 # put Python classes and functions here
 
@@ -169,6 +178,17 @@ enemy_list = Level.bad(1, 1, eloc)
 
 ground_list = Level.ground(1, 1, 0, worldy - 240, 800, 240)
 plat_list = Level.platform(1)
+
+gloc = []
+tx = 64
+ty = 64
+
+i = 0
+while i <= (worldx / tx) + tx:
+    gloc.append(i * tx)
+    i = i + 1
+
+ground_list = Level.ground(i, gloc, tx, ty)
 
 # put run-once code here
 
