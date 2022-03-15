@@ -2,6 +2,7 @@ import Variables
 import pygame
 import os
 import sys
+import Setup
 
 '''
 Objects
@@ -60,7 +61,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.images[self.frame // Variables.ani]
 
         # Touching enemy
-        hit_list = pygame.sprite.spritecollide(self, Variables.enemy_list, False)
+        hit_list = pygame.sprite.spritecollide(self, Setup.enemy_list, False)
 
         for enemy in hit_list:
             self.health -= 1
@@ -147,7 +148,7 @@ class Level():
             ploc.append((300, Variables.worldy - ty - 256, 3))
             ploc.append((500, Variables.worldy - ty - 128, 4))
             while i < len(ploc):
-                plat = Platform((ploc[i][0] + (i * tx)), ploc[i][1], tx, ty, 'images/kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
+                plat = Platform((ploc[i][0] + (i * tx)), ploc[i][1], tx, ty, 'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
                 plat_list.add(plat)
                 i = i + 1
 

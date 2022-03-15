@@ -15,15 +15,14 @@
 import pygame  # load pygame keywords
 import sys  # let python use your file system
 import os  # help python identify your OS
-
+import Setup
 import Variables
 
 '''
 Main Loop
 '''
 
-game = Variables.Setup()
-game.setup()
+Setup.setup()
 
 while True:
     for event in pygame.event.get():
@@ -36,17 +35,17 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT or event.key == ord('a'):
-                player.control(-steps, 0)
+                Setup.player.control(-Setup.steps, 0)
             if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                player.control(steps, 0)
+                Setup.player.control(Setup.steps, 0)
             if event.key == pygame.K_UP or event.key == ord('w'):
                 print('jump')
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == ord('a'):
-                player.control(steps, 0)
+                Setup.player.control(Setup.steps, 0)
             if event.key == pygame.K_RIGHT or event.key == ord('a'):
-                player.control(-steps, 0)
+                Setup.player.control(-Setup.steps, 0)
             if event.key == pygame.K_UP or event.key == ord('w'):
                 print('jump stop')
             if event.key == ord('q'):
@@ -54,14 +53,14 @@ while True:
                 sys.exit()
                 main = False
 
-    world.blit(backdrop, backdropbox)
-    player.update()
-    player_list.draw(world)  # draw the player
-    enemy_list.draw(world)  # refresh enemy
-    plat_list.draw(world)  # draw the platforms
-    for e in enemy_list:
+    Setup.world.blit(Setup.backdrop, Setup.backdropbox)
+    Setup.player.update()
+    Setup.player_list.draw(Setup.world)  # draw the player
+    Setup.enemy_list.draw(Setup.world)  # refresh enemy
+    Setup.plat_list.draw(Setup.world)  # draw the platforms
+    for e in Setup.enemy_list:
         e.move()
     pygame.display.flip()
-    clock.tick(fps)
+    Setup.clock.tick(Variables.fps)
 
 # put game loop here
