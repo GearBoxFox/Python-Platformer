@@ -112,6 +112,15 @@ class Enemy(pygame.sprite.Sprite):
 
         self.counter += 1
 
+    def gravity(self):
+        """
+        Enemy gravity
+        """
+        self.rect.y += 20
+
+        if self.rect.y > Variables.worldy and self.rect.y >= Variables.worldy:
+            self.rect.y = Variables.worldy-Variables.ty-Variables.ty
+
 
 class Platform(pygame.sprite.Sprite):
     """

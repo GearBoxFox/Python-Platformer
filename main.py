@@ -56,6 +56,8 @@ while True:
     Setup.world.blit(Setup.backdrop, Setup.backdropbox)
     Setup.player.gravity()
     Setup.player.update()
+    for e in Setup.enemy_list:
+        e.gravity()
     Setup.player_list.draw(Setup.world)  # draw the player
     Setup.enemy_list.draw(Setup.world)  # refresh enemy
     Setup.ground_list.draw(Setup.world)
