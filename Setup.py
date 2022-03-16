@@ -33,16 +33,12 @@ def setup():
     eloc = [300, 0]
     enemy_list = Classes.Level.bad(1, 1, eloc)
 
-    gloc = []
-    tx = 64
-    ty = 64
-
     i = 0
-    while i <= (Variables.worldx / tx) + tx:
-        gloc.append(i * tx)
+    while i <= (Variables.worldx / Variables.tx) + Variables.tx:
+        Variables.gloc.append(i * Variables.tx)
         i = i + 1
 
-    plat_list = Classes.Level.platform(1, 1, tx, ty)
-    ground_list = Classes.Level.ground(1, 1, gloc, tx, ty)
+    plat_list = Classes.Level.platform(1, 1, Variables.tx, Variables.ty)
+    ground_list = Classes.Level.ground(1, 1, Variables.gloc, Variables.tx, Variables.ty)
 
 # put run-once code here

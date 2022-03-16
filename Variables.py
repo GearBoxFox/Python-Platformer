@@ -16,4 +16,8 @@ main = True
 
 ALPHA = (255, 255, 255)
 
+gloc = []
+tx = 64
+ty = 64
+
 # put variables here

@@ -38,6 +38,17 @@ class Player(pygame.sprite.Sprite):
         self.movex += x
         self.movey += y
 
+    def gravity(self):
+        """
+        makes the player fall down
+        """
+
+        self.movey += 3.2
+
+        if self.rect.y > Variables.worldy and self.movey >= 0:
+            self.movey = 0
+            self.rect.y = Variables.worldy-Variables.ty-Variables.ty
+
     def update(self):
         """
         Update sprite position
@@ -103,6 +114,9 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Platform(pygame.sprite.Sprite):
+    """
+    Creates the bases of a platform
+    """
     def __init__(self, xloc, yloc, imgw, imgh, img):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(os.path.join('images', img)).convert()
@@ -114,6 +128,9 @@ class Platform(pygame.sprite.Sprite):
 
 
 class Level():
+    """
+    initializes enemy spawn locations
+    """
     def bad(self, lvl, eloc):
         if lvl == 1:
             enemy = Enemy(eloc[0], eloc[1], 'ImpVanillaWalk1.png')  # spawns an enemy
@@ -126,11 +143,14 @@ class Level():
         return enemy_list
 
     def ground(self, lvl, gloc, tx, ty):
+        """
+        sets up ground by using the earlier plaform class
+        """
         ground_list = pygame.sprite.Group()
         i = 0
         if lvl == 1:
             while i < len(gloc):
-                ground = Platform(gloc[i], Variables.worldy - ty, tx, ty, 'platformPack_tile001.png')
+                ground = Platform(gloc[i], Variables.worldy - ty, tx, ty, 'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
                 ground_list.add(ground)
                 i += 1
 
@@ -140,6 +160,9 @@ class Level():
         return ground_list
 
     def platform(self, lvl, tx, ty):
+        """
+        sets up platforms
+        """
         plat_list = pygame.sprite.Group()
         ploc = []
         i = 0
