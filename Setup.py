@@ -3,6 +3,7 @@ import Variables
 import pygame
 import os
 
+
 def setup():
     global world
     global backdrop
@@ -11,6 +12,7 @@ def setup():
     global player_list
     global enemy_list
     global plat_list
+    global ground_list
     global clock
     global steps
 
@@ -40,18 +42,7 @@ def setup():
         gloc.append(i * tx)
         i = i + 1
 
-    ground_list = Classes.Level.ground(1, 0, Variables.worldy - 240, 800, 240)
     plat_list = Classes.Level.platform(1, 1, tx, ty)
-
-    gloc = []
-    tx = 64
-    ty = 64
-
-    i = 0
-    while i <= (Variables.worldx / tx) + tx:
-        gloc.append(i * tx)
-        i = i + 1
-
-    ground_list = Classes.Level.ground(1, i, gloc, tx, ty)
+    ground_list = Classes.Level.ground(1, 1, gloc, tx, ty)
 
 # put run-once code here

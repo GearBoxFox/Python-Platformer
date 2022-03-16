@@ -54,9 +54,11 @@ while True:
                 main = False
 
     Setup.world.blit(Setup.backdrop, Setup.backdropbox)
+    Setup.player.gravity()
     Setup.player.update()
     Setup.player_list.draw(Setup.world)  # draw the player
     Setup.enemy_list.draw(Setup.world)  # refresh enemy
+    Setup.ground_list.draw(Setup.world)
     Setup.plat_list.draw(Setup.world)  # draw the platforms
     for e in Setup.enemy_list:
         e.move()
