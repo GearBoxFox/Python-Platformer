@@ -21,6 +21,9 @@ class Player(pygame.sprite.Sprite):
         self.frame = 0  # count frames
         self.health = 10  # keep track of hp
         self.images = []
+        # Jump code below
+        self.is_falling = False
+        self.is_jumping = True
 
         for i in range(1, 5):
             img = pygame.image.load(os.path.join('images', 'hero' + str(i) + '.png')).convert()
@@ -43,11 +46,8 @@ class Player(pygame.sprite.Sprite):
         makes the player fall down
         """
 
-        self.movey += 3.2
-
-        if self.rect.y > Variables.worldy and self.movey >= 0:
-            self.movey = 0
-            self.rect.y = Variables.worldy-Variables.ty-Variables.ty
+        if self.is_jumping:
+            self.movey += 3.2
 
     def update(self):
         """
@@ -77,6 +77,19 @@ class Player(pygame.sprite.Sprite):
         for enemy in hit_list:
             self.health -= 1
             print(self.health)
+
+        ground_hit_list = pygame.sprite.spritecollide(self, Setup.ground_list, False)
+
+        for g in ground_hit_list:
+            self.movey = 0
+            self.rect.bottom = g.rect.top
+            self.is_jumping = False  # Stop jumping
+
+        if self.rect.y >= Variables.worldy:
+            self.health -= 1
+            print(self.health)
+            self.rect.x = Variables.tx
+            self.rect.y = Variables.ty
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -118,14 +131,15 @@ class Enemy(pygame.sprite.Sprite):
         """
         self.rect.y += 20
 
-        if self.rect.y > Variables.worldy and self.rect.y >= Variables.worldy:
-            self.rect.y = Variables.worldy-Variables.ty-Variables.ty
+        if self.rect.y >= Variables.worldy - Variables.ty:
+            self.rect.y = Variables.worldy - Variables.ty - Variables.ty
 
 
 class Platform(pygame.sprite.Sprite):
     """
     Creates the bases of a platform
     """
+
     def __init__(self, xloc, yloc, imgw, imgh, img):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(os.path.join('images', img)).convert()
@@ -140,6 +154,7 @@ class Level():
     """
     initializes enemy spawn locations
     """
+
     def bad(self, lvl, eloc):
         if lvl == 1:
             enemy = Enemy(eloc[0], eloc[1], 'ImpVanillaWalk1.png')  # spawns an enemy
@@ -159,7 +174,8 @@ class Level():
         i = 0
         if lvl == 1:
             while i < len(gloc):
-                ground = Platform(gloc[i], Variables.worldy - ty, tx, ty, 'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
+                ground = Platform(gloc[i], Variables.worldy - ty, tx, ty,
+                                  'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
                 ground_list.add(ground)
                 i += 1
 
@@ -180,7 +196,8 @@ class Level():
             ploc.append((300, Variables.worldy - ty - 256, 3))
             ploc.append((500, Variables.worldy - ty - 128, 4))
             while i < len(ploc):
-                plat = Platform((ploc[i][0] + (i * tx)), ploc[i][1], tx, ty, 'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
+                plat = Platform((ploc[i][0] + (i * tx)), ploc[i][1], tx, ty,
+                                'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
                 plat_list.add(plat)
                 i = i + 1
 
@@ -188,6 +205,5 @@ class Level():
                 print("Level " + str(lvl))
 
             return plat_list
-
 
 # put Python classes and functions here
