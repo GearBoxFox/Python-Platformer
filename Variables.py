@@ -1,7 +1,3 @@
-import Classes
-import pygame
-import os
-
 '''
 Variables
 '''
@@ -20,4 +16,6 @@ gloc = []
 tx = 64
 ty = 64
 
+forwardsx = 600
+backwardsx = 230
 # put variables here
