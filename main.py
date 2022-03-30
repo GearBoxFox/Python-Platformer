@@ -34,6 +34,7 @@ class Player(pygame.sprite.Sprite):
         self.frame = 0  # count frames
         self.health = 10  # keep track of hp
         self.images = []
+
         # Jump code below
         self.is_jumping = True
         self.is_falling = True
@@ -75,6 +76,7 @@ class Player(pygame.sprite.Sprite):
 
         # Moving left
         if self.movex < 0:
+            self.is_jumping = True
             self.frame += 1
             if self.frame > 3 * Variables.ani:
                 self.frame = 0
@@ -82,6 +84,7 @@ class Player(pygame.sprite.Sprite):
 
         # Moving right
         if self.movex > 0:
+            self.is_jumping = True
             self.frame += 1
             if self.frame > 3 * Variables.ani:
                 self.frame = 0
@@ -112,7 +115,10 @@ class Player(pygame.sprite.Sprite):
             if self.rect.bottom <= p.rect.bottom:
                 self.rect.bottom = p.rect.top
             else:
-                self.movey += 3.2
+                self.movey += 6.4
+                self.is_falling = True
+
+
 
         # Falling off the world
         if self.rect.y >= Variables.worldy:
@@ -310,7 +316,7 @@ while True:
     # Scroll the world forwards
     if player.rect.x >= Variables.forwardsx:
         scroll = player.rect.x - Variables.forwardsx
-        player.rect = Variables.forwardsx
+        player.rect.x = Variables.forwardsx
         for p in plat_list:
             p.rect.x -= scroll
 
@@ -318,7 +324,8 @@ while True:
     if player.rect.x <= Variables.backwardsx:
         scroll = Variables.backwardsx - player.rect.x
         player.rect.x = Variables.backwardsx
-        for
+        for p in plat_list:
+            p.rect.x += scroll
 
     world.blit(backdrop, backdropbox)
     player.gravity()
