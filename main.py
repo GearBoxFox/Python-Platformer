@@ -95,7 +95,7 @@ class Player(pygame.sprite.Sprite):
 
         for enemy in hit_list:
             self.health -= 1
-            print(self.health)
+            #print(self.health)
 
         ground_hit_list = pygame.sprite.spritecollide(self, ground_list, False)
 
@@ -115,7 +115,8 @@ class Player(pygame.sprite.Sprite):
             if self.rect.bottom <= p.rect.bottom:
                 self.rect.bottom = p.rect.top
             else:
-                self.movey += 6.4
+                self.rect.y += 6.4
+                self.is_jumping = True
                 self.is_falling = True
 
 
@@ -239,11 +240,14 @@ class Level():
         if lvl == 1:
             ploc.append((200, Variables.worldy - ty - 128, 3))
             ploc.append((300, Variables.worldy - ty - 256, 3))
-            ploc.append((500, Variables.worldy - ty - 128, 4))
+            ploc.append((550, Variables.worldy - ty - 128, 4))
             while i < len(ploc):
-                plat = Platform((ploc[i][0] + (i * tx)), ploc[i][1], tx, ty,
-                                'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
-                plat_list.add(plat)
+                j=0
+                while j <= ploc[i][2]:
+                    plat = Platform((ploc[i][0] + (j * tx)), ploc[i][1], tx, ty,
+                                    'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile047.png')
+                    plat_list.add(plat)
+                    j = j + 1
                 i = i + 1
 
             if lvl == 2:
