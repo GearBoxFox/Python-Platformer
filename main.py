@@ -254,6 +254,10 @@ class Level():
                 print("Level " + str(lvl))
 
             return plat_list
+    def loot(self, lvl):
+        if lvl == 1:
+            loot_list = pygame.sprite.Group()
+            loot = Platform(Variables.tx*9, Variables.ty*5, 'kenney')
 
 
 # put Python classes and functions here
