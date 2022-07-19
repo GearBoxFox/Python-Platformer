@@ -3,13 +3,13 @@ import os
 import pygame
 
 import Variables
-import person
+import classes.person
 
 
-class Player(person.Character):
+class Player(classes.person.Character):
 
     def __init__(self, ground_list, platform_list, hit_list):
-        super().__init__("hero", ground_list, platform_list, hit_list)
+        super().__init__("hero1", ground_list, platform_list, hit_list)
 
         for i in range(1, 5):
             img = pygame.image.load(os.path.join('images', 'hero' + str(i) + '.png')).convert()

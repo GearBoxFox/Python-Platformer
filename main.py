@@ -272,6 +272,11 @@ class Level():
 clock = pygame.time.Clock()  # set up the clock for the game
 pygame.init()  # initiate the game code
 
+i = 0
+while i <= (Variables.worldx / Variables.tx) + Variables.tx:
+    Variables.gloc.append(i * Variables.tx)
+    i = i + 1
+
 world = pygame.display.set_mode([Variables.worldx, Variables.worldy])
 backdrop = pygame.image.load(os.path.join('images', 'stage.png'))
 backdropbox = world.get_rect()
@@ -288,15 +293,6 @@ player.rect.y = 0  # go to y
 player_list = pygame.sprite.Group()
 player_list.add(player)
 steps = 10  # how many pixels to move
-
-
-
-i = 0
-while i <= (Variables.worldx / Variables.tx) + Variables.tx:
-    Variables.gloc.append(i * Variables.tx)
-    i = i + 1
-
-
 
 # put run-once code here
 
