@@ -10,10 +10,11 @@ class Character(pygame.sprite.Sprite):
     Spawn a player
     """
 
-    def __init__(self, img, ground_list, platform_list, hit_list):
+    def __init__(self, img, ground_list, platform_list, hit_list, loot_list):
         pygame.sprite.Sprite.__init__(self)
-        self.movex = 0  # move along X
-        self.movey = 0  # move along Y
+        self.score = 0
+        self.moveX = 0  # move along X
+        self.moveY = 0  # move along Y
         self.frame = 0  # count frames
         self.health = 10  # keep track of hp
         self.images = []
@@ -21,8 +22,9 @@ class Character(pygame.sprite.Sprite):
         self.ground_list = ground_list
         self.plat_list = platform_list
         self.hit_list = hit_list
+        self.loot_list = loot_list
 
-        # Jump code below
+        # Jumping code below
         self.is_jumping = True
         self.is_falling = True
 
@@ -38,8 +40,8 @@ class Character(pygame.sprite.Sprite):
         control player
         """
 
-        self.movex += x
-        self.movey += y
+        self.moveX += x
+        self.moveY += y
 
     def gravity(self):
         """
@@ -47,7 +49,7 @@ class Character(pygame.sprite.Sprite):
         """
 
         if self.is_jumping:
-            self.movey += 3.2
+            self.moveY += 3.2
 
     def jump(self):
         if self.is_jumping is False:
@@ -57,7 +59,7 @@ class Character(pygame.sprite.Sprite):
     def registerJump(self):
         if self.is_jumping and self.is_falling is False:
             self.is_falling = True
-            self.movey -= 33
+            self.moveY -= 33
 
     def voidFall(self):
         if self.rect.y >= Variables.worldy:
@@ -71,7 +73,7 @@ class Character(pygame.sprite.Sprite):
 
         for p in plat_hit_list:
             self.is_jumping = False
-            self.movey = 0
+            self.moveY = 0
 
             # Approach from bottom
             if self.rect.bottom <= p.rect.bottom:
@@ -85,7 +87,7 @@ class Character(pygame.sprite.Sprite):
         ground_hit_list = pygame.sprite.spritecollide(self, self.ground_list, False)
 
         for g in ground_hit_list:
-            self.movey = 0
+            self.moveY = 0
             self.rect.bottom = g.rect.top
             self.is_jumping = False  # Stop jumping
 
@@ -93,7 +95,7 @@ class Character(pygame.sprite.Sprite):
         # This chunk of code controls the walk animations for most objects
 
         # Moving left
-        if self.movex < 0:
+        if self.moveX < 0:
             self.is_jumping = True
             self.frame += 1
             if self.frame > 3 * Variables.ani:
@@ -101,7 +103,7 @@ class Character(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.images[self.frame // Variables.ani], True, False)
 
         # Moving right
-        if self.movex > 0:
+        if self.moveX > 0:
             self.is_jumping = True
             self.frame += 1
             if self.frame > 3 * Variables.ani:
@@ -109,7 +111,7 @@ class Character(pygame.sprite.Sprite):
             self.image = self.images[self.frame // Variables.ani]
 
     def hitCharacter(self):
-        hit_list = pygame.sprite.spritecollide(self, self.hit_list, False)
+        return
 
     def update(self):
         """
@@ -128,10 +130,13 @@ class Character(pygame.sprite.Sprite):
         # Falling off the world
         self.voidFall()
 
+        # Register and collisions
+        self.hitCharacter()
+
         # Jumping code
         self.registerJump()
 
         # Update player code
-        self.rect.x += self.movex
+        self.rect.x += self.moveX
 
-        self.rect.y += self.movey
+        self.rect.y += self.moveY

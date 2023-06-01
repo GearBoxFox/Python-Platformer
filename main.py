@@ -16,7 +16,8 @@ import pygame  # load pygame keywords
 import sys  # let python use your file system
 import os  # help python identify your OS
 import Variables
-import classes.player
+from classes import player, titlescreen
+
 
 """
 Objects
@@ -152,24 +153,46 @@ class Enemy(pygame.sprite.Sprite):
         self.counter = 0  # counter variable
         self.isJumping = True
         self.isFalling = False
+        self.startX = x
+        self.endX = x + 300
+        self.direction = True
 
     def move(self):
         """
         enemy movement
         """
-        distance = 80
-        speed = 8
+        # distance = 80
+        # speed = 8
+        #
+        # if 0 <= self.counter <= distance:
+        #     self.rect.x += speed
+        #     self.image = pygame.transform.flip(self.image, False, False)
+        # elif distance <= self.counter <= distance * 2:
+        #     self.rect.x -= speed
+        #     self.image = pygame.transform.flip(self.image, True, False)
+        # else:
+        #     self.counter = 0
+        #
+        # self.counter += 1
 
-        if 0 <= self.counter <= distance:
-            self.rect.x += speed
-            self.image = pygame.transform.flip(self.image, False, False)
-        elif distance <= self.counter <= distance * 2:
-            self.rect.x -= speed
+        # move right
+        if self.rect.x < self.endX and self.direction:
+            self.rect.x += 8
+
+        # move left
+        elif self.rect.x > self.startX and not self.direction:
+            self.rect.x -= 8
+
+
+        # reverse from far right
+        elif self.rect.x >= self.endX and self.direction:
+            self.direction = False
             self.image = pygame.transform.flip(self.image, True, False)
-        else:
-            self.counter = 0
 
-        self.counter += 1
+        # reverse from far left
+        elif self.rect.x <= self.startX and not self.direction:
+            self.direction = True
+            self.image = pygame.transform.flip(self.image, True, False)
 
     def gravity(self):
         """
@@ -262,9 +285,14 @@ class Level():
             return plat_list
 
     def loot(self, lvl):
+        tx = 60
+        ty = 60
         if lvl == 1:
             loot_list = pygame.sprite.Group()
-            loot = Platform(Variables.tx * 9, Variables.ty * 5, 'kenney')
+            loot = Platform(Variables.tx * 9, Variables.ty * 5, tx, ty, 'kenney_simplifiedPlatformer/PNG/Items'
+                                                                        '/platformPack_item010.png')
+            loot_list.add(loot)
+            return loot_list
 
 
 # put Python classes and functions here
@@ -272,22 +300,32 @@ class Level():
 clock = pygame.time.Clock()  # set up the clock for the game
 pygame.init()  # initiate the game code
 
+# generate ground
 i = 0
 while i <= (Variables.worldx / Variables.tx) + Variables.tx:
     Variables.gloc.append(i * Variables.tx)
     i = i + 1
 
+# setup world and backdrop
 world = pygame.display.set_mode([Variables.worldx, Variables.worldy])
+
 backdrop = pygame.image.load(os.path.join('images', 'stage.png'))
 backdropbox = world.get_rect()
 
+
+# ground and platform lists
 plat_list = Level.platform(1, 1, Variables.tx, Variables.ty)
 ground_list = Level.ground(1, 1, Variables.gloc, Variables.tx, Variables.ty)
 
+# enemy list
 eloc = [300, 0]
 enemy_list = Level.bad(1, 1, eloc)
 
-player = classes.player.Player(ground_list, plat_list, enemy_list)  # spawn player
+# loot setup
+loot_list = Level.loot(1, 1)
+
+# setup player
+player = player.Player(ground_list, plat_list, enemy_list, loot_list)  # spawn player
 player.rect.x = 0  # go to x
 player.rect.y = 0  # go to y
 player_list = pygame.sprite.Group()
@@ -295,6 +333,8 @@ player_list.add(player)
 steps = 10  # how many pixels to move
 
 # put run-once code here
+
+# titlescreen.run(world)
 
 '''
 Main Loop
@@ -309,6 +349,7 @@ while True:
             finally:
                 main = False
 
+        # handle keydown movement events
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP or event.key == ord('w'):
                 player.jump()
@@ -317,6 +358,7 @@ while True:
             if event.key == pygame.K_RIGHT or event.key == ord('d'):
                 player.control(steps, 0)
 
+        # handle keyup movement events
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == ord('a'):
                 player.control(steps, 0)
@@ -331,27 +373,57 @@ while True:
     if player.rect.x >= Variables.forwardsx:
         scroll = player.rect.x - Variables.forwardsx
         player.rect.x = Variables.forwardsx
+
+        # platforms
         for p in plat_list:
             p.rect.x -= scroll
+
+        # enemies
+        for e in enemy_list:
+            e.startX -= scroll
+            e.endX -= scroll
+            e.rect.x -= scroll
+
+        for l in loot_list:
+            l.rect.x -= scroll
 
     # Scroll the world backwards
     if player.rect.x <= Variables.backwardsx:
         scroll = Variables.backwardsx - player.rect.x
         player.rect.x = Variables.backwardsx
+
+        # platforms
         for p in plat_list:
             p.rect.x += scroll
 
+        # enemies
+        for e in enemy_list:
+            e.startX += scroll
+            e.endX += scroll
+            e.rect.x += scroll
+
+        for l in loot_list:
+            l.rect.x += scroll
+
+    # draw the world and run periodic updates
     world.blit(backdrop, backdropbox)
+
     player.gravity()
     player.update()
-    player_list.draw(world)  # draw the player
-    enemy_list.draw(world)  # refresh enemy
-    ground_list.draw(world)
-    plat_list.draw(world)  # draw the platforms
+
     for e in enemy_list:
         e.move()
         e.gravity()
+
+    player_list.draw(world)  # draw the player
+    enemy_list.draw(world)  # refresh enemy
+    ground_list.draw(world)  # draw ground
+    plat_list.draw(world)  # draw the platforms
+    loot_list.draw(world)
+
     pygame.display.flip()
     clock.tick(Variables.fps)
+
+
 
 # put game loop here
