@@ -5,9 +5,6 @@ from pygame import draw, mouse, Rect, freetype
 
 freetype.init()
 
-font_path = os.path.join(os.path.dirname(os.path.realpath()),
-                         "fonts", "fantaquebold.ttf")
-font_size = tx
 
 fontaquebold = freetype.Font(font_path, font_size)
 

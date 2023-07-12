@@ -2,6 +2,9 @@
 Variables
 '''
 
+import os
+
+
 worldx = 960
 worldy = 720
 
@@ -19,3 +22,8 @@ ty = 64
 forwardsx = 600
 backwardsx = 230
 # put variables here
+
+
+font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                         "fonts", "fantaquebold.ttf")
+font_size = tx
