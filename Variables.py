@@ -10,7 +10,7 @@ ani = 4  # animation cycles
 
 main = True
 
-ALPHA = (255, 255, 255)
+ALPHA = (0, 255, 0)
 
 gloc = []
 tx = 64

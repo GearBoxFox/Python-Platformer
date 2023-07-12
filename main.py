@@ -23,120 +23,6 @@ from classes import player, titlescreen
 Objects
 """
 
-
-class Player1(pygame.sprite.Sprite):
-    """
-    Spawn a player
-    """
-
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.movex = 0  # move along X
-        self.movey = 0  # move along Y
-        self.frame = 0  # count frames
-        self.health = 10  # keep track of hp
-        self.images = []
-
-        # Jump code below
-        self.is_jumping = True
-        self.is_falling = True
-
-        for i in range(1, 5):
-            img = pygame.image.load(os.path.join('images', 'hero' + str(i) + '.png')).convert()
-            img.convert_alpha()
-            img.set_colorkey(Variables.ALPHA)
-            self.images.append(img)
-            self.image = self.images[0]
-            self.rect = self.image.get_rect()
-
-    def control(self, x, y):
-        """
-        control player
-        """
-
-        self.movex += x
-        self.movey += y
-
-    def gravity(self):
-        """
-        makes the player fall down
-        """
-
-        if self.is_jumping:
-            self.movey += 3.2
-
-    def jump(self):
-        if self.is_jumping is False:
-            self.is_falling = False
-            self.is_jumping = True
-
-    def update(self):
-        """
-        Update sprite position
-        """
-
-        # Moving left
-        if self.movex < 0:
-            self.is_jumping = True
-            self.frame += 1
-            if self.frame > 3 * Variables.ani:
-                self.frame = 0
-            self.image = pygame.transform.flip(self.images[self.frame // Variables.ani], True, False)
-
-        # Moving right
-        if self.movex > 0:
-            self.is_jumping = True
-            self.frame += 1
-            if self.frame > 3 * Variables.ani:
-                self.frame = 0
-            self.image = self.images[self.frame // Variables.ani]
-
-        # Touching enemy
-        hit_list = pygame.sprite.spritecollide(self, enemy_list, False)
-
-        for enemy in hit_list:
-            self.health -= 1
-            # print(self.health)
-
-        ground_hit_list = pygame.sprite.spritecollide(self, ground_list, False)
-
-        # Ground collision for gravity
-        for g in ground_hit_list:
-            self.movey = 0
-            self.rect.bottom = g.rect.top
-            self.is_jumping = False  # Stop jumping
-
-        plat_hit_list = pygame.sprite.spritecollide(self, plat_list, False)
-
-        for p in plat_hit_list:
-            self.is_jumping = False
-            self.movey = 0
-
-            # Approach from bottom
-            if self.rect.bottom <= p.rect.bottom:
-                self.rect.bottom = p.rect.top
-            else:
-                self.rect.y += 6.4
-                self.is_jumping = True
-                self.is_falling = True
-
-        # Falling off the world
-        if self.rect.y >= Variables.worldy:
-            self.health -= 1
-            print(self.health)
-            self.rect.x = Variables.tx
-            self.rect.y = Variables.ty
-
-        # Jumping code
-        if self.is_jumping and self.is_falling is False:
-            self.is_falling = True
-            self.movey -= 33
-
-        self.rect.x += self.movex
-
-        self.rect.y += self.movey
-
-
 class Enemy(pygame.sprite.Sprite):
     """
     Spawns an enemy
@@ -145,7 +31,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, img):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(os.path.join('images', img))
-        self.image.convert_alpha()
+        # self.image.convert_alpha()
         self.image.set_colorkey(Variables.ALPHA)
         self.rect = self.image.get_rect()
         self.rect.x = x
