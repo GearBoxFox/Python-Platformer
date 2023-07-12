@@ -31,7 +31,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, img):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(os.path.join('images', img))
-        # self.image.convert_alpha()
+        self.image.convert_alpha()
         self.image.set_colorkey(Variables.ALPHA)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -220,7 +220,7 @@ steps = 10  # how many pixels to move
 
 # put run-once code here
 
-# titlescreen.run(world)
+titlescreen.run(world)
 
 '''
 Main Loop
