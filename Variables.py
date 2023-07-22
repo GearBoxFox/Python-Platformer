@@ -25,5 +25,10 @@ backwardsx = 230
 
 
 font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                         "fonts", "fantaquebold.ttf")
+                         "fonts", "fantasquebold.ttf")
 font_size = tx
+
+# Level data
+box_platforms = [
+    []
+]

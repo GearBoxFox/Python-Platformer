@@ -47,27 +47,14 @@ class Enemy(pygame.sprite.Sprite):
         """
         enemy movement
         """
-        # distance = 80
-        # speed = 8
-        #
-        # if 0 <= self.counter <= distance:
-        #     self.rect.x += speed
-        #     self.image = pygame.transform.flip(self.image, False, False)
-        # elif distance <= self.counter <= distance * 2:
-        #     self.rect.x -= speed
-        #     self.image = pygame.transform.flip(self.image, True, False)
-        # else:
-        #     self.counter = 0
-        #
-        # self.counter += 1
 
         # move right
         if self.rect.x < self.endX and self.direction:
-            self.rect.x += 8
+            self.rect.x += 10
 
         # move left
         elif self.rect.x > self.startX and not self.direction:
-            self.rect.x -= 8
+            self.rect.x -= 10
 
 
         # reverse from far right

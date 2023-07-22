@@ -1,6 +1,6 @@
 import pygame
 import os
-from Variables import worldx, worldy, tx
+from Variables import worldx, worldy, tx, font_path, font_size
 from pygame import draw, mouse, Rect, freetype
 
 freetype.init()
@@ -18,7 +18,8 @@ def run(window):
     while not startgame:
         # draw the startbutton rectangle
         draw.rect(window, (0, 0, 255), startButton, 0, 1)
-        fontaquebold.render_to(window, (worldx * 1/4, worldy * 1/2), "Start Game", pygame.BLACK, None, size=64)
+        fontaquebold.render_to(window, (worldx * 1/2 - 200, 240), "Tux's Turmoil", (0, 0, 0), None, size=64)
+        fontaquebold.render_to(window, (worldx * 1/4 + 80, worldy * 1/2 + 60), "Start Game", (255, 255, 255), None, size=64)
 
         for event in pygame.event.get():
             # quit event for closing the window
