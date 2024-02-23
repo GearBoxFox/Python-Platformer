@@ -1,0 +1,109 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "LevelMaps/level1.tmx",
+    "expandedProjectPaths": [
+        "LevelMaps",
+        ".",
+        "Tilemaps"
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "C:/Users/lboog/GitHub/Python-Platformer/assets/Pixel Platformer/Tiled/tilemap-example-a.tmx": {
+            "scale": 2.0481837606837603,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 234.35397214542803,
+                "y": 135.48589014657557
+            }
+        },
+        "C:/Users/lboog/GitHub/Python-Platformer/assets/Pixel Platformer/Tiled/tileset-characters.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/lboog/GitHub/Python-Platformer/assets/Pixel Platformer/Tiled/tileset-tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/lboog/GitHub/Python-Platformer/venv/Lib/site-packages/arcade/resources/tiled_maps/map.json": {
+            "scale": 0.33,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1260.6060606060605,
+                "y": 398.4848484848485
+            }
+        },
+        "C:/Users/lboog/GitHub/Python-Platformer/venv/Lib/site-packages/arcade/resources/tiled_maps/map.json#my_tileset": {
+            "scaleInDock": 1
+        },
+        "LevelMaps/level1.json": {
+            "scale": 0.33,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1051.5151515151515,
+                "y": 734.8484848484849
+            }
+        },
+        "LevelMaps/level1.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 272,
+                "y": 53
+            }
+        },
+        "Tilemaps/basekenneyplatformer.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tilemaps/kenneybackground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tilemaps/kenneyplatformerbase.xml": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tilemaps/kenneyplatformeritems.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/lboog/GitHub/Python-Platformer/assets/tiled/LevelMaps",
+    "last.externalTilesetPath": "C:/Users/lboog/GitHub/Python-Platformer/assets/Pixel Platformer/Tiled",
+    "last.imagePath": "C:/Users/lboog/GitHub/Python-Platformer/assets/Pixel Platformer/Tilemap",
+    "map.fixedSize": true,
+    "map.height": 10,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.renderOrder": null,
+    "map.tileHeight": 18,
+    "map.tileWidth": 18,
+    "openFiles": [
+        "LevelMaps/level1.tmx",
+        "Tilemaps/kenneybackground.tsx"
+    ],
+    "project": "python-platformer.tiled-project",
+    "recentFiles": [
+        "Tilemaps/kenneybackground.tsx",
+        "LevelMaps/level1.tmx",
+        "C:/Users/lboog/GitHub/Python-Platformer/assets/Pixel Platformer/Tiled/tilemap-example-a.tmx",
+        "Tilemaps/basekenneyplatformer.tsx",
+        "Tilemaps/kenneyplatformeritems.tsx",
+        "C:/Users/lboog/GitHub/Python-Platformer/venv/Lib/site-packages/arcade/resources/tiled_maps/map.json",
+        "LevelMaps/level1.json",
+        "Tilemaps/kenneyplatformerbase.xml"
+    ],
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 1,
+    "tileset.spacing": 1,
+    "tileset.tileSize": {
+        "height": 24,
+        "width": 24
+    },
+    "tileset.type": 0
+}
