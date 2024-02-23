@@ -1,302 +1,203 @@
-#!/usr/bin/env python 3
-# by Logan Hollowood
-
-# GPLv3
-# This program is free software: you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation, either version 3 of
-# the Lisense, or (at your option) any later version.
-
-# This program is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY: without even the implied
-# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-# PURPOSE. See the GNU General Public Lisense for more details.
-
-import pygame  # load pygame keywords
-import sys  # let python use your file system
-import os  # help python identify your OS
-import Variables
-from classes import player, titlescreen
-
-
 """
-Objects
+Platformer Game
 """
+import arcade
 
-class Enemy(pygame.sprite.Sprite):
+# Constants
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 650
+SCREEN_TITLE = "Platformer"
+
+# Constants used to scale our sprites from their original size
+CHARACTER_SCALING = 1
+TILE_SCALING = 0.5
+COIN_SCALING = 0.5
+
+# Movement speed of player, in pixels per frame
+PLAYER_MOVEMENT_SPEED = 10
+GRAVITY = 1
+PLAYER_JUMP_SPEED = 20
+
+
+class MyGame(arcade.Window):
     """
-    Spawns an enemy
-    """
-
-    def __init__(self, x, y, img):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join('images', img))
-        self.image.convert_alpha()
-        self.image.set_colorkey(Variables.ALPHA)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.counter = 0  # counter variable
-        self.isJumping = True
-        self.isFalling = False
-        self.startX = x
-        self.endX = x + 300
-        self.direction = True
-
-    def move(self):
-        """
-        enemy movement
-        """
-
-        # move right
-        if self.rect.x < self.endX and self.direction:
-            self.rect.x += 10
-
-        # move left
-        elif self.rect.x > self.startX and not self.direction:
-            self.rect.x -= 10
-
-
-        # reverse from far right
-        elif self.rect.x >= self.endX and self.direction:
-            self.direction = False
-            self.image = pygame.transform.flip(self.image, True, False)
-
-        # reverse from far left
-        elif self.rect.x <= self.startX and not self.direction:
-            self.direction = True
-            self.image = pygame.transform.flip(self.image, True, False)
-
-    def gravity(self):
-        """
-        Enemy gravity
-        """
-
-        if self.isJumping:
-            self.rect.y += 20
-
-        e_ground_hit_list = pygame.sprite.spritecollide(self, ground_list, False)
-
-        # Ground collision for gravity
-        for g in e_ground_hit_list:
-            self.rect.bottom = g.rect.top
-            self.isJumping = False  # Stop jumping
-
-
-class Platform(pygame.sprite.Sprite):
-    """
-    Creates the bases of a platform
+    Main application class.
     """
 
-    def __init__(self, xloc, yloc, imgw, imgh, img):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(os.path.join('images', img)).convert()
-        self.image.convert_alpha()
-        self.image.set_colorkey(Variables.ALPHA)
-        self.rect = self.image.get_rect()
-        self.rect.y = yloc
-        self.rect.x = xloc
+    def __init__(self):
+
+        # Call the parent class and set up the window
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+
+        # Our TileMap Object
+
+        self.tile_map = None
+
+        # Our Scene Object
+        self.scene = None
+
+        # Separate variable that holds the player sprite
+        self.player_sprite = None
+
+        # Our physics engine
+        self.physics_engine = None
+
+        # A Camera that can be used for scrolling the screen
+        self.camera = None
+
+        # A Camera that can be used to draw GUI elements
+        self.gui_camera = None
+
+        # Keep track of the score
+        self.score = 0
+
+        # Load sounds
+        self.collect_coin_sound = arcade.load_sound(":resources:sounds/coin1.wav")
+        self.jump_sound = arcade.load_sound(":resources:sounds/jump1.wav")
+
+        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
+
+    def setup(self):
+        """Set up the game here. Call this function to restart the game."""
+
+        # Set up the Cameras
+        self.camera = arcade.Camera(self.width, self.height)
+        self.gui_camera = arcade.Camera(self.width, self.height)
+
+        # Name of map file to load
+
+        map_name = ":resources:tiled_maps/map.json"
+
+        # Layer specific options are defined based on Layer names in a dictionary
+        # Doing this will make the SpriteList for the platforms layer
+        # use spatial hashing for detection.
+        layer_options = {
+            "Platforms": {
+                "use_spatial_hash": True,
+            },
+        }
+
+        # Read in the tiled map
+
+        self.tile_map = arcade.load_tilemap(map_name, TILE_SCALING, layer_options)
+
+        # Initialize Scene with our TileMap, this will automatically add all layers
+        # from the map as SpriteLists in the scene in the proper order.
+        self.scene = arcade.Scene.from_tilemap(self.tile_map)
+
+        # Keep track of the score
+        self.score = 0
+
+        # Set up the player, specifically placing it at these coordinates.
+        image_source = ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
+        self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        self.player_sprite.center_x = 128
+        self.player_sprite.center_y = 128
+        self.scene.add_sprite("Player", self.player_sprite)
+
+        # --- Other stuff
+
+        # Set the background color
+
+        if self.tile_map.background_color:
+            arcade.set_background_color(self.tile_map.background_color)
+
+        # Create the 'physics engine'
+
+        self.physics_engine = arcade.PhysicsEnginePlatformer(
+
+            self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
+
+        )
+
+    def on_draw(self):
+        """Render the screen."""
+
+        # Clear the screen to the background color
+        self.clear()
+
+        # Activate the game camera
+        self.camera.use()
+
+        # Draw our Scene
+        self.scene.draw()
+
+        # Activate the GUI camera before drawing GUI elements
+        self.gui_camera.use()
+
+        # Draw our score on the screen, scrolling it with the viewport
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(
+            score_text,
+            10,
+            10,
+            arcade.csscolor.WHITE,
+            18,
+        )
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed."""
+
+        if key == arcade.key.UP or key == arcade.key.W:
+            if self.physics_engine.can_jump():
+                self.player_sprite.change_y = PLAYER_JUMP_SPEED
+                arcade.play_sound(self.jump_sound)
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key."""
+
+        if key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = 0
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player_sprite.change_x = 0
+
+    def center_camera_to_player(self):
+        screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width / 2)
+        screen_center_y = self.player_sprite.center_y - (
+                self.camera.viewport_height / 2
+        )
+        if screen_center_x < 0:
+            screen_center_x = 0
+        if screen_center_y < 0:
+            screen_center_y = 0
+        player_centered = screen_center_x, screen_center_y
+
+        self.camera.move_to(player_centered)
+
+    def on_update(self, delta_time):
+        """Movement and game logic"""
+
+        # Move the player with the physics engine
+        self.physics_engine.update()
+
+        # See if we hit any coins
+        coin_hit_list = arcade.check_for_collision_with_list(
+            self.player_sprite, self.scene["Coins"]
+        )
+
+        # Loop through each coin we hit (if any) and remove it
+        for coin in coin_hit_list:
+            # Remove the coin
+            coin.remove_from_sprite_lists()
+            # Play a sound
+            arcade.play_sound(self.collect_coin_sound)
+            # Add one to the score
+            self.score += 1
+
+        # Position the camera
+        self.center_camera_to_player()
 
 
-class Level():
-    """
-    initializes enemy spawn locations
-    """
-
-    def bad(self, lvl, eloc):
-        if lvl == 1:
-            enemy = Enemy(eloc[0], eloc[1], 'ImpVanillaWalk1.png')  # spawns an enemy
-            enemy_list = pygame.sprite.Group()  # creates enemy group
-            enemy_list.add(enemy)
-
-        if lvl == 2:
-            print("Level " + str(lvl))
-
-        return enemy_list
-
-    def ground(self, lvl, gloc, tx, ty):
-        """
-        sets up ground by using the earlier plaform class
-        """
-        ground_list = pygame.sprite.Group()
-        i = 0
-        if lvl == 1:
-            while i < len(gloc):
-                ground = Platform(gloc[i], Variables.worldy - ty, tx, ty,
-                                  'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile001.png')
-                ground_list.add(ground)
-                i += 1
-
-        if lvl == 2:
-            print("Level " + str(lvl))
-
-        return ground_list
-
-    def platform(self, lvl, tx, ty):
-        """
-        sets up platforms
-        """
-        plat_list = pygame.sprite.Group()
-        ploc = []
-        i = 0
-        if lvl == 1:
-            ploc.append((200, Variables.worldy - ty - 128, 3))
-            ploc.append((300, Variables.worldy - ty - 256, 3))
-            ploc.append((550, Variables.worldy - ty - 128, 4))
-            while i < len(ploc):
-                j = 0
-                while j <= ploc[i][2]:
-                    plat = Platform((ploc[i][0] + (j * tx)), ploc[i][1], tx, ty,
-                                    'kenney_simplifiedPlatformer/PNG/Tiles/platformPack_tile047.png')
-                    plat_list.add(plat)
-                    j = j + 1
-                i = i + 1
-
-            if lvl == 2:
-                print("Level " + str(lvl))
-
-            return plat_list
-
-    def loot(self, lvl):
-        tx = 60
-        ty = 60
-        if lvl == 1:
-            loot_list = pygame.sprite.Group()
-            loot = Platform(Variables.tx * 9, Variables.ty * 5, tx, ty, 'kenney_simplifiedPlatformer/PNG/Items'
-                                                                        '/platformPack_item010.png')
-            loot_list.add(loot)
-            return loot_list
+def main():
+    """Main function"""
+    window = MyGame()
+    window.setup()
+    arcade.run()
 
 
-# put Python classes and functions here
-
-clock = pygame.time.Clock()  # set up the clock for the game
-pygame.init()  # initiate the game code
-
-# generate ground
-i = 0
-while i <= (Variables.worldx / Variables.tx) + Variables.tx:
-    Variables.gloc.append(i * Variables.tx)
-    i = i + 1
-
-# setup world and backdrop
-world = pygame.display.set_mode([Variables.worldx, Variables.worldy])
-
-backdrop = pygame.image.load(os.path.join('images', 'stage.png'))
-backdropbox = world.get_rect()
-
-
-# ground and platform lists
-plat_list = Level.platform(1, 1, Variables.tx, Variables.ty)
-ground_list = Level.ground(1, 1, Variables.gloc, Variables.tx, Variables.ty)
-
-# enemy list
-eloc = [300, 0]
-enemy_list = Level.bad(1, 1, eloc)
-
-# loot setup
-loot_list = Level.loot(1, 1)
-
-# setup player
-player = player.Player(ground_list, plat_list, enemy_list, loot_list)  # spawn player
-player.rect.x = 0  # go to x
-player.rect.y = 0  # go to y
-player_list = pygame.sprite.Group()
-player_list.add(player)
-steps = 10  # how many pixels to move
-
-# put run-once code here
-
-titlescreen.run(world)
-
-'''
-Main Loop
-'''
-
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            try:
-                sys.exit()
-            finally:
-                main = False
-
-        # handle keydown movement events
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP or event.key == ord('w'):
-                player.jump()
-            if event.key == pygame.K_LEFT or event.key == ord('a'):
-                player.control(-steps, 0)
-            if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                player.control(steps, 0)
-
-        # handle keyup movement events
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == ord('a'):
-                player.control(steps, 0)
-            if event.key == pygame.K_RIGHT or event.key == ord('d'):
-                player.control(-steps, 0)
-            if event.key == ord('q'):
-                pygame.quit()
-                sys.exit()
-                main = False
-
-    # Scroll the world forwards
-    if player.rect.x >= Variables.forwardsx:
-        scroll = player.rect.x - Variables.forwardsx
-        player.rect.x = Variables.forwardsx
-
-        # platforms
-        for p in plat_list:
-            p.rect.x -= scroll
-
-        # enemies
-        for e in enemy_list:
-            e.startX -= scroll
-            e.endX -= scroll
-            e.rect.x -= scroll
-
-        for l in loot_list:
-            l.rect.x -= scroll
-
-    # Scroll the world backwards
-    if player.rect.x <= Variables.backwardsx:
-        scroll = Variables.backwardsx - player.rect.x
-        player.rect.x = Variables.backwardsx
-
-        # platforms
-        for p in plat_list:
-            p.rect.x += scroll
-
-        # enemies
-        for e in enemy_list:
-            e.startX += scroll
-            e.endX += scroll
-            e.rect.x += scroll
-
-        for l in loot_list:
-            l.rect.x += scroll
-
-    # draw the world and run periodic updates
-    world.blit(backdrop, backdropbox)
-
-    player.gravity()
-    player.update()
-
-    for e in enemy_list:
-        e.move()
-        e.gravity()
-
-    player_list.draw(world)  # draw the player
-    enemy_list.draw(world)  # refresh enemy
-    ground_list.draw(world)  # draw ground
-    plat_list.draw(world)  # draw the platforms
-    loot_list.draw(world)
-
-    pygame.display.flip()
-    clock.tick(Variables.fps)
-
-
-
-# put game loop here
+if __name__ == "__main__":
+    main()
